@@ -23,9 +23,12 @@ function generateDailyGame() {
     // Aesthetic params
     const titles = [
         "Shape Sniper", "Neon Clicker", "Reflex Mastery", "Color Hunter",
-        "Swift Strike", "Echo Popper", "Void Chaser", "Pulse Runner"
+        "Swift Strike", "Echo Popper", "Void Chaser", "Pulse Runner",
+        "Pixel Pulsar", "Cyber Striker", "Zen Archer", "Bit Blast",
+        "Glow Guardian", "Orbit Outlaw", "Velocity Vector", "Synapse Surge",
+        "Neon Knight", "Aether Ace", "Prism Pilot", "Titan Tapper"
     ];
-    const title = `${titles[Math.floor(Math.random() * titles.length)]} (${slug})`;
+    const title = titles[Math.floor(Math.random() * titles.length)];
     const bg = Math.random() > 0.5 ? '#0b1220' : '#1a1a1a';
     const color = randColor();
     const speed = (Math.random() * 1.5 + 0.8).toFixed(2);
