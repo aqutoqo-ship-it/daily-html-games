@@ -35,11 +35,11 @@ function generateDailyGame() {
 
     // Inject parameters
     const output = tpl
-        .replace(/{{TITLE}}/g, title)
-        .replace(/{{SEED}}/g, seed)
-        .replace(/{{BG}}/g, bg)
-        .replace(/{{COLOR}}/g, color)
-        .replace(/{{SPEED}}/g, speed);
+        .replace(/\{\s*\{\s*TITLE\s*\}\s*\}/gs, title)
+        .replace(/\{\s*\{\s*SEED\s*\}\s*\}/gs, seed)
+        .replace(/\{\s*\{\s*BG\s*\}\s*\}/gs, bg)
+        .replace(/\{\s*\{\s*COLOR\s*\}\s*\}/gs, color)
+        .replace(/\{\s*\{\s*SPEED\s*\}\s*\}/gs, speed);
 
     const outputDir = path.join(__dirname, 'games', folderName);
     if (!fs.existsSync(outputDir)) {
