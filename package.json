@@ -1,0 +1,12 @@
+{
+    "name": "daily-html-games",
+    "version": "1.0.0",
+    "description": "Daily automated HTML5 game generator with English UI",
+    "main": "generator.js",
+    "scripts": {
+        "start": "node generator.js"
+    },
+    "dependencies": {},
+    "author": "AQutoQo",
+    "license": "ISC"
+}

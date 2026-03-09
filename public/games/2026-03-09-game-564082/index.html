@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Hunter (game-564082)</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+
+            background-color: {
+                    {
+                    BG
+                }
+            }
+
+            ;
+
+            color: {
+                    {
+                    COLOR
+                }
+            }
+
+            ;
+            font-family: 'Segoe UI',
+            Tahoma,
+            Geneva,
+            Verdana,
+            sans-serif;
+            overflow: hidden;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+
+            border: 4px solid {
+                    {
+                    COLOR
+                }
+            }
+
+            ;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            cursor: crosshair;
+        }
+
+        .target {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+
+            background-color: {
+                    {
+                    COLOR
+                }
+            }
+
+            ;
+            border-radius: 50%;
+
+            box-shadow: 0 0 10px {
+                    {
+                    COLOR
+                }
+            }
+
+            ;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        #ui {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #score {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #timer {
+            font-size: 18px;
+            opacity: 0.8;
+        }
+
+        #start-btn {
+            background: {
+                    {
+                    COLOR
+                }
+            }
+
+            ;
+
+            color: {
+                    {
+                    BG
+                }
+            }
+
+            ;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Color Hunter (game-564082)</h1>
+    <div id="game-container"></div>
+    <div id="ui">
+        <div id="score">Score: 0</div>
+        <div id="timer">Time Remaining: 30s</div>
+        <button id="start-btn">Start Game</button>
+    </div>
+
+    <script>
+        const container = document.getElementById('game-container');
+        const scoreEl = document.getElementById('score');
+        const timerEl = document.getElementById('timer');
+        const startBtn = document.getElementById('start-btn');
+
+        let score = 0;
+        let timeLeft = 30;
+        let gameActive = false;
+        let gameInterval;
+        let spawnInterval;
+
+        const GAME_SPEED = {{ SPEED }}; // Lower is faster
+
+        function spawnTarget() {
+            if (!gameActive) return;
+            const target = document.createElement('div');
+            target.className = 'target';
+            const x = Math.random() * (container.clientWidth - 40);
+            const y = Math.random() * (container.clientHeight - 40);
+            target.style.left = x + 'px';
+            target.style.top = y + 'px';
+
+            target.onclick = () => {
+                score++;
+                scoreEl.textContent = 'Score: ' + score;
+                target.remove();
+            };
+
+            container.appendChild(target);
+            setTimeout(() => target.remove(), 2000 / GAME_SPEED);
+        }
+
+        function startGame() {
+            score = 0;
+            timeLeft = 30;
+            gameActive = true;
+            scoreEl.textContent = 'Score: 0';
+            timerEl.textContent = 'Time Remaining: 30s';
+            startBtn.style.display = 'none';
+            container.innerHTML = '';
+
+            gameInterval = setInterval(() => {
+                timeLeft--;
+                timerEl.textContent = 'Time Remaining: ' + timeLeft + 's';
+                if (timeLeft <= 0) endGame();
+            }, 1000);
+
+            spawnInterval = setInterval(spawnTarget, 800 / GAME_SPEED);
+        }
+
+        function endGame() {
+            gameActive = false;
+            clearInterval(gameInterval);
+            clearInterval(spawnInterval);
+            alert('Game Over! Your final score is: ' + score);
+            startBtn.style.display = 'inline-block';
+            startBtn.textContent = 'Try Again';
+        }
+
+        startBtn.onclick = startGame;
+    </script>
+</body>
+
+</html>
