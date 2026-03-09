@@ -41,7 +41,7 @@ function generateDailyGame() {
         .replace(/{{COLOR}}/g, color)
         .replace(/{{SPEED}}/g, speed);
 
-    const outputDir = path.join(__dirname, 'public', 'games', folderName);
+    const outputDir = path.join(__dirname, 'games', folderName);
     if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, { recursive: true });
     }
@@ -59,7 +59,7 @@ function generateDailyGame() {
  * Update the main landing page with the new game entry
  */
 function updateLandingPage(slug, title, date) {
-    const landingPath = path.join(__dirname, 'public', 'index.html');
+    const landingPath = path.join(__dirname, 'index.html');
     let content = '';
 
     if (fs.existsSync(landingPath)) {
@@ -73,7 +73,7 @@ function updateLandingPage(slug, title, date) {
     <style>
         body { background: #0b1220; color: #fff; font-family: sans-serif; padding: 40px; }
         .game-list { display: grid; gap: 10px; }
-        .game-item { background: #1a1a1a; padding: 15px; border-radius: 8px; border-left: 4px solid #gold; }
+        .game-item { background: #1a1a1a; padding: 15px; border-radius: 8px; border-left: 4px solid gold; }
         a { color: gold; text-decoration: none; font-weight: bold; }
     </style>
 </head>
