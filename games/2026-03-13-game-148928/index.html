@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glimmer Path</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5510873226977158" crossorigin="anonymous"></script>
+    <style>
+        body { 
+            margin: 0; 
+            background: black; 
+            overflow: hidden; 
+            color: white; 
+            font-family: Arial, sans-serif; 
+        }
+        canvas { 
+            display: block; 
+            margin: auto; 
+            background: radial-gradient(circle, #1a1a1a, #000); 
+        }
+        #startBtn { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            padding: 20px; 
+            font-size: 24px; 
+            background: #333; 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            display: none; 
+        }
+        #score { 
+            position: absolute; 
+            top: 20px; 
+            left: 20px; 
+            font-size: 20px; 
+        }
+        .trail { 
+            position: absolute; 
+            border-radius: 50%; 
+            pointer-events: none; 
+            background: rgba(255, 255, 0, 0.8); 
+            animation: glow 1s infinite alternate; 
+        }
+        @keyframes glow {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.5); }
+        }
+    </style>
+</head>
+<body>
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5510873226977158" data-ad-slot="7052338247" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+    <canvas id="gameCanvas"></canvas>
+    <button id="startBtn">Start Game</button>
+    <div id="score">Score: 0</div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const trails = [];
+        let score = 0;
+        let gameActive = false;
+
+        function startGame() {
+            gameActive = true;
+            score = 0;
+            trails.length = 0;
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('score').innerText = `Score: ${score}`;
+            requestAnimationFrame(gameLoop);
+        }
+
+        function gameLoop() {
+            if (!gameActive) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            updateTrails();
+            drawTrails();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function updateTrails() {
+            if (trails.length > 0) {
+                trails.forEach((trail, index) => {
+                    trail.lifetime--;
+                    if (trail.lifetime <= 0) trails.splice(index, 1);
+                });
+            }
+            if (Math.random() < 0.02) {
+                createTrail();
+                score++;
+                document.getElementById('score').innerText = `Score: ${score}`;
+            }
+        }
+
+        function createTrail() {
+            const trail = {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: 10,
+                lifetime: 20
+            };
+            trails.push(trail);
+        }
+
+        function drawTrails() {
+            trails.forEach(trail => {
+                ctx.beginPath();
+                ctx.arc(trail.x, trail.y, trail.size, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 0, 0.8)';
+                ctx.fill();
+            });
+        }
+
+        document.getElementById('startBtn').addEventListener('click', startGame);
+        window.onload = () => { document.getElementById('startBtn').style.display = 'block'; }
+    </script>
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="aqutoqo" data-description="Support me on Buy me a coffee!" data-message="" data-color="#FFD700" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body>
+</html>
