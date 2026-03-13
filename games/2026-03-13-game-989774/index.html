@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Weave</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #game {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(6, 50px);
+            grid-template-rows: repeat(6, 50px);
+            gap: 2px;
+        }
+        .cell {
+            width: 50px;
+            height: 50px;
+            background-color: #ddd;
+            border: 1px solid #aaa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .cell.active {
+            background-color: transparent;
+        }
+        .cell.red { background-color: #ff5733; }
+        .cell.green { background-color: #33ff57; }
+        .cell.blue { background-color: #3357ff; }
+        .cell.yellow { background-color: #ffcc33; }
+        #score {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+        #start {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <button id="start">Start Game</button>
+        <div id="score">Score: 0</div>
+        <div id="game"></div>
+    </div>
+    <script>
+        const colors = ['red', 'green', 'blue', 'yellow'];
+        let grid, score, activeCells;
+
+        function init() {
+            score = 0;
+            activeCells = [];
+            grid = Array.from({ length: 6 }, () => Array(6).fill(null));
+            document.getElementById('score').textContent = `Score: ${score}`;
+            const gameDiv = document.getElementById('game');
+            gameDiv.innerHTML = '';
+            for (let i = 0; i < 36; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.addEventListener('click', () => cellClick(cell));
+                gameDiv.appendChild(cell);
+            }
+        }
+
+        function startGame() {
+            init();
+            addRandomCells();
+            updateGrid();
+        }
+
+        function addRandomCells() {
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            const randomIndex = Math.floor(Math.random() * 36);
+            grid[Math.floor(randomIndex / 6)][randomIndex % 6] = randomColor;
+            activeCells.push(randomIndex);
+        }
+
+        function cellClick(cell) {
+            const index = Array.from(cell.parentNode.children).indexOf(cell);
+            const row = Math.floor(index / 6);
+            const col = index % 6;
+            const cellColor = grid[row][col];
+
+            if (cellColor && !activeCells.includes(index)) {
+                activeCells.push(index);
+                cell.classList.add('active', cellColor);
+            } else if (activeCells.includes(index)) {
+                activeCells = activeCells.filter(i => i !== index);
+                cell.classList.remove('active', cellColor);
+            }
+
+            if (activeCells.length > 1) {
+                score += 10;
+                document.getElementById('score').textContent = `Score: ${score}`;
+                resetActiveCells();
+            }
+        }
+
+        function resetActiveCells() {
+            activeCells.forEach(index => {
+                const cell = document.getElementById('game').children[index];
+                cell.className = 'cell';
+                grid[Math.floor(index / 6)][index % 6] = null;
+            });
+            activeCells = [];
+            addRandomCells();
+            updateGrid();
+        }
+
+        function updateGrid() {
+            const gameDiv = document.getElementById('game');
+            Array.from(gameDiv.children).forEach((cell, index) => {
+                const row = Math.floor(index / 6);
+                const col = index % 6;
+                const cellColor = grid[row][col];
+                if (cellColor) {
+                    cell.classList.add(cellColor);
+                } else {
+                    cell.className = 'cell';
+                }
+            });
+        }
+
+        document.getElementById('start').addEventListener('click', startGame);
+    </script>
+</body>
+</html>
