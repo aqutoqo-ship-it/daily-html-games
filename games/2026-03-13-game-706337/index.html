@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echoquest</title>
+    <style>
+        body { 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            background-color: #000; 
+            color: #fff; 
+            font-family: Arial, sans-serif; 
+        }
+        canvas { 
+            border: 1px solid #fff; 
+        }
+        #startBtn { 
+            position: absolute; 
+            top: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            padding: 10px 20px; 
+            font-size: 24px; 
+            cursor: pointer; 
+        }
+        #score { 
+            position: absolute; 
+            top: 20px; 
+            right: 20px; 
+            font-size: 24px; 
+        }
+    </style>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5510873226977158" crossorigin="anonymous"></script>
+</head>
+<body>
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5510873226977158" data-ad-slot="7052338247" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <button id="startBtn">Start Game</button>
+    <div id="score">Score: 0</div>
+    
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const startBtn = document.getElementById('startBtn');
+        const scoreDisplay = document.getElementById('score');
+        let score = 0;
+        let gameActive = false;
+        let player;
+        let obstacles = [];
+        const obstacleCount = 10;
+
+        class Player {
+            constructor() {
+                this.x = 50;
+                this.y = canvas.height - 30;
+                this.width = 30;
+                this.height = 30;
+                this.color = '#fff';
+                this.jumpPower = 15;
+                this.gravity = 1;
+                this.velocityY = 0;
+                this.jump = false;
+            }
+            update() {
+                this.y += this.velocityY;
+                if (this.jump) {
+                    this.velocityY = -this.jumpPower;
+                    this.jump = false;
+                }
+                this.velocityY += this.gravity;
+                if (this.y + this.height > canvas.height) {
+                    this.y = canvas.height - this.height;
+                    this.velocityY = 0;
+                }
+                this.draw();
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            }
+        }
+
+        class Obstacle {
+            constructor(x) {
+                this.x = x;
+                this.y = canvas.height - 30;
+                this.width = 30;
+                this.height = 30;
+                this.color = '#fff';
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            }
+        }
+
+        function startGame() {
+            score = 0;
+            gameActive = true;
+            player = new Player();
+            obstacles = [];
+            for (let i = 0; i < obstacleCount; i++) {
+                obstacles.push(new Obstacle(Math.random() * (canvas.width - 30)));
+            }
+            scoreDisplay.innerText = `Score: ${score}`;
+            update();
+        }
+
+        function update() {
+            if (!gameActive) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            player.update();
+            obstacles.forEach(obstacle => obstacle.draw());
+            checkCollision();
+            requestAnimationFrame(update);
+        }
+
+        function checkCollision() {
+            obstacles.forEach(obstacle => {
+                if (player.x < obstacle.x + obstacle.width && 
+                    player.x + player.width > obstacle.x && 
+                    player.y < obstacle.y + obstacle.height && 
+                    player.y + player.height > obstacle.y) {
+                    gameActive = false;
+                    alert("Game Over! Your score: " + score);
+                    startBtn.style.display = 'block';
+                } else {
+                    score++;
+                }
+            });
+            scoreDisplay.innerText = `Score: ${score}`;
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ' && gameActive) {
+                player.jump = true;
+            }
+        });
+
+        startBtn.addEventListener('click', () => {
+            startBtn.style.display = 'none';
+            startGame();
+        });
+    </script>
+    
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="aqutoqo" data-description="Support me on Buy me a coffee!" data-message="" data-color="#FFD700" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body>
+</html>
