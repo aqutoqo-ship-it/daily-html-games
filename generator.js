@@ -86,7 +86,15 @@ Requirements:
 - Output a single complete HTML file containing all CSS and JS.
 - Return ONLY the clean HTML code. No talk, no markdown markers.
 - Ensure the gameplay is unique and reflects the concept provided.
-- Include a Start button and a score system.`;
+- Include a Start button and a score system.
+- **Monetization Integration (MANDATORY)**:
+    1. Inside <head>, include: <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5510873226977158" crossorigin="anonymous"></script>
+    2. At the top of <body>, include a horizontal AdSense unit:
+       <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5510873226977158" data-ad-slot="7052338247" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
+       <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    3. Include the Buy Me A Coffee widget script before </body>:
+       <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="aqutoqo" data-description="Support me on Buy me a coffee!" data-message="" data-color="#FFD700" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+`;
 
     try {
         console.log(`[Generator] Requesting AI to generate: ${concept.title}...`);
