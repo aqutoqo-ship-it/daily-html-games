@@ -2,22 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily HTML Games</title>
     <style>
         body { background: #0b1220; color: #fff; font-family: sans-serif; padding: 40px; display: flex; flex-direction: column; min-height: 100vh; margin: 0; }
-        .container { flex: 1; }
-        .game-list { display: grid; gap: 10px; }
-        .game-item { background: #1a1a1a; padding: 15px; border-radius: 8px; border-left: 4px solid gold; }
-        a { color: gold; text-decoration: none; font-weight: bold; }
-        footer { text-align: center; padding: 40px; border-top: 1px solid #334155; color: #94a3b8; font-size: 0.85rem; margin-top: auto; }
-        footer a { color: #94a3b8; font-weight: normal; }
+        .container { flex: 1; max-width: 1200px; margin: 0 auto; width: 100%; }
+        header { text-align: center; margin-bottom: 60px; }
+        h1 { color: gold; font-size: 2.5rem; text-transform: uppercase; letter-spacing: 2px; }
+        .game-list { display: grid; gap: 15px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+        .game-item { background: #1a1a1a; padding: 20px; border-radius: 12px; border-left: 4px solid gold; transition: transform 0.3s; }
+        .game-item:hover { transform: translateY(-5px); }
+        .game-item span { color: #94a3b8; font-size: 0.9rem; display: block; margin-bottom: 5px; }
+        a { color: gold; text-decoration: none; font-weight: bold; font-size: 1.2rem; }
+        footer { text-align: center; padding: 40px; border-top: 1px solid #334155; color: #94a3b8; font-size: 0.85rem; margin-top: 60px; }
+        footer a { color: #94a3b8; text-decoration: none; margin: 0 10px; }
+        footer a:hover { color: gold; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Daily HTML Games</h1>
-        <div class="game-list" id="list"><!-- GAMES_START --><!-- GAMES_END --></div>
+        <header>
+            <h1>Daily HTML Games</h1>
+            <p>Every day, a unique AI-generated game experience.</p>
+        </header>
+
+        <div class="game-list" id="list">
+            <!-- GAMES_START -->
+            <!-- GAMES_END -->
+        </div>
     </div>
+
     <footer>
         <p>&copy; 2026 AQutoQo Evolution Portal. All rights reserved.</p>
         <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
