@@ -1,66 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Daily HTML Games</title>
     <style>
-        body {
-            background: #0b1220;
-            color: #fff;
-            font-family: sans-serif;
-            padding: 40px;
-        }
-
-        .game-list {
-            display: grid;
-            gap: 10px;
-        }
-
-        .game-item {
-            background: #1a1a1a;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid gold;
-        }
-
-        a {
-            color: gold;
-            text-decoration: none;
-            font-weight: bold;
-        }
+        body { background: #0b1220; color: #fff; font-family: sans-serif; padding: 40px; display: flex; flex-direction: column; min-height: 100vh; margin: 0; }
+        .container { flex: 1; }
+        .game-list { display: grid; gap: 10px; }
+        .game-item { background: #1a1a1a; padding: 15px; border-radius: 8px; border-left: 4px solid gold; }
+        a { color: gold; text-decoration: none; font-weight: bold; }
+        footer { text-align: center; padding: 40px; border-top: 1px solid #334155; color: #94a3b8; font-size: 0.85rem; margin-top: auto; }
+        footer a { color: #94a3b8; font-weight: normal; }
     </style>
 </head>
-
 <body>
-    <h1>Daily HTML Games (English Edition)</h1>
-    <div class="game-list" id="list"><!-- GAMES_START -->
-        <div class="game-item"><span>[2026-03-13]</span> <a href="games/2026-03-13-game-814182/index.html">Rhythm Drift</a></div>
-        <div class="game-item"><span>[2026-03-13]</span> <a href="games/2026-03-13-game-723546/index.html">Luminara Maze</a></div>
-        <div class="game-item"><span>[2026-03-13]</span> <a href="games/2026-03-13-game-770943/index.html">Echo Pulse</a></div>
-        <div class="game-item"><span>[2026-03-13]</span> <a href="games/2026-03-13-game-598319/index.html">Color Cascade</a></div>
-        <div class="game-item"><span>[2026-03-13]</span> <a href="games/2026-03-13-game-301327/index.html">Neon reflex 8298</a></div>
-        <div class="game-item"><span>[2026-03-13]</span> <a href="games/2026-03-13-game-433478/index.html">Pulse Hunter</a></div>
-        <div class="game-item"><span>[2026-03-13]</span> <a href="games/2026-03-13-game-684940/index.html">Neon Reflex</a></div>
-        <div class="game-item"><span>[2026-03-13]</span> <a href="games/2026-03-13-game-672448/index.html">Nebula Runner</a></div>
-        <div class="game-item"><span>[2026-03-12]</span> <a href="games/2026-03-12-game-991640/index.html">Synth Wave</a></div>
-        <div class="game-item"><span>[2026-03-11]</span> <a href="games/2026-03-11-game-346069/index.html">Grid Master</a></div>
-        <div class="game-item"><span>[2026-03-10]</span> <a href="games/2026-03-10-game-155071/index.html">Zen Flow</a></div>
-        <div class="game-item"><span>[2026-03-10]</span> <a href="games/2026-03-10-game-186950/index.html">Grid Master</a></div>
-        <div class="game-item"><span>[2026-03-10]</span> <a href="games/2026-03-10-game-718497/index.html">Cyber Strike</a></div>
-        <div class="game-item"><span>[2026-03-10]</span> <a href="games/2026-03-10-game-355542/index.html">Grid Master</a></div>
-        <div class="game-item"><span>[2026-03-10]</span> <a href="games/2026-03-10-game-808204/index.html">Grid Master</a></div>
-        <div class="game-item"><span>[2026-03-10]</span> <a href="games/2026-03-10-game-130434/index.html">Grid Master</a></div>
-        <div class="game-item"><span>[2026-03-10]</span> <a href="games/2026-03-10-game-267222/index.html">Void Clicker</a></div>
-        <div class="game-item">
-            <span>[2026-03-09]</span> 
-            <a href="games/2026-03-09-game-939772/index.html">Orbit Outlaw</a>
-        </div>
-        <div class="game-item">
-            <span>[2026-03-09]</span>
-            <a href="games/2026-03-09-game-687095/index.html">Neon Clicker (game-687095)</a>
-        </div><!-- GAMES_END -->
+    <div class="container">
+        <h1>Daily HTML Games</h1>
+        <div class="game-list" id="list"><!-- GAMES_START --><!-- GAMES_END --></div>
     </div>
+    <footer>
+        <p>&copy; 2026 AQutoQo Evolution Portal. All rights reserved.</p>
+        <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    </footer>
 </body>
-
 </html>
