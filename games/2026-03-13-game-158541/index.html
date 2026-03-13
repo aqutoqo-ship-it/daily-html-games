@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadow Painter</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5510873226977158" crossorigin="anonymous"></script>
+    <style>
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background-color: black; 
+            color: white; 
+            font-family: Arial, sans-serif; 
+        }
+        canvas { 
+            display: block; 
+            margin: auto; 
+            background: white; 
+        }
+        #startBtn { 
+            position: absolute; 
+            top: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            padding: 10px 20px; 
+            font-size: 20px; 
+            cursor: pointer; 
+            background-color: #FFD700; 
+            border: none; 
+            border-radius: 5px; 
+        }
+        #score { 
+            position: absolute; 
+            top: 20px; 
+            right: 20px; 
+            font-size: 20px; 
+        }
+    </style>
+</head>
+<body>
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5510873226977158" data-ad-slot="7052338247" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    <button id="startBtn">Start Game</button>
+    <div id="score">Score: 0</div>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const startBtn = document.getElementById('startBtn');
+        const scoreDisplay = document.getElementById('score');
+        let score = 0;
+        let gameActive = false;
+
+        const player = { x: 50, y: 550, size: 20 };
+        const lightSources = [{ x: 200, y: 100, radius: 100, color: 'yellow' }];
+        const paths = [{ x: 300, y: 500, width: 200, height: 20 }];
+
+        function drawPlayer() {
+            ctx.fillStyle = 'black';
+            ctx.fillRect(player.x, player.y, player.size, player.size);
+        }
+
+        function drawLight() {
+            lightSources.forEach(light => {
+                ctx.beginPath();
+                ctx.arc(light.x, light.y, light.radius, 0, Math.PI * 2);
+                ctx.fillStyle = light.color;
+                ctx.fill();
+                ctx.closePath();
+            });
+        }
+
+        function drawPaths() {
+            ctx.fillStyle = 'blue';
+            paths.forEach(path => {
+                ctx.fillRect(path.x, path.y, path.width, path.height);
+            });
+        }
+
+        function checkCollision() {
+            paths.forEach(path => {
+                if (player.x < path.x + path.width &&
+                    player.x + player.size > path.x &&
+                    player.y < path.y + path.height &&
+                    player.y + player.size > path.y) {
+                    score++;
+                    scoreDisplay.innerText = `Score: ${score}`;
+                    player.x = 50; // Reset player position
+                    player.y = 550; // Reset player position
+                }
+            });
+        }
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawLight();
+            drawPaths();
+            drawPlayer();
+            checkCollision();
+            if (gameActive) requestAnimationFrame(gameLoop);
+        }
+
+        startBtn.addEventListener('click', () => {
+            score = 0;
+            scoreDisplay.innerText = `Score: ${score}`;
+            gameActive = true;
+            startBtn.style.display = 'none';
+            gameLoop();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (gameActive) {
+                if (e.key === 'ArrowUp') player.y -= 10;
+                if (e.key === 'ArrowDown') player.y += 10;
+                if (e.key === 'ArrowLeft') player.x -= 10;
+                if (e.key === 'ArrowRight') player.x += 10;
+            }
+        });
+    </script>
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="aqutoqo" data-description="Support me on Buy me a coffee!" data-message="" data-color="#FFD700" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body>
+</html>
