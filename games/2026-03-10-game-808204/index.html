@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Master</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #game {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .card {
+            width: 100px;
+            height: 100px;
+            background-color: #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        #score {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        #startBtn {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game">
+        <div id="score">Score: 0</div>
+        <div id="grid"></div>
+        <button id="restartBtn">Restart</button>
+    </div>
+    <button id="startBtn">Start Game</button>
+
+    <script>
+        const shapes = ['🔴', '🟠', '🟡', '🟢', '🔵', '🟣', '⚫', '⚪'];
+        let grid = [];
+        let firstCard, secondCard;
+        let lockBoard = false;
+        let score = 0;
+
+        document.getElementById('startBtn').addEventListener('click', startGame);
+        document.getElementById('restartBtn').addEventListener('click', startGame);
+
+        function startGame() {
+            score = 0;
+            grid = [];
+            document.getElementById('score').innerText = 'Score: ' + score;
+            const gridElement = document.getElementById('grid');
+            gridElement.innerHTML = '';
+            shapes.concat(shapes).sort(() => 0.5 - Math.random()).forEach(shape => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.dataset.shape = shape;
+                card.addEventListener('click', flipCard);
+                gridElement.appendChild(card);
+                grid.push(card);
+            });
+            document.getElementById('game').style.display = 'flex';
+            document.getElementById('startBtn').style.display = 'none';
+        }
+
+        function flipCard(event) {
+            if (lockBoard || event.target === firstCard) return;
+            event.target.innerText = event.target.dataset.shape;
+            if (!firstCard) {
+                firstCard = event.target;
+                return;
+            }
+            secondCard = event.target;
+            lockBoard = true;
+            checkForMatch();
+        }
+
+        function checkForMatch() {
+            const isMatch = firstCard.dataset.shape === secondCard.dataset.shape;
+            if (isMatch) {
+                score++;
+                document.getElementById('score').innerText = 'Score: ' + score;
+                resetBoard();
+            } else {
+                setTimeout(() => {
+                    firstCard.innerText = '';
+                    secondCard.innerText = '';
+                    resetBoard();
+                }, 1000);
+            }
+        }
+
+        function resetBoard() {
+            [firstCard, secondCard] = [null, null];
+            lockBoard = false;
+        }
+    </script>
+
+</body>
+</html>
