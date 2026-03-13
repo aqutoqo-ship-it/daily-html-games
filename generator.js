@@ -2,40 +2,69 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 
+// Manual .env loader
+const dotEnvPath = path.join(__dirname, '..', '..', '.env');
+if (fs.existsSync(dotEnvPath)) {
+    const envContent = fs.readFileSync(dotEnvPath, 'utf8');
+    envContent.split('\n').forEach(line => {
+        const [key, ...val] = line.split('=');
+        if (key && val.length) process.env[key.trim()] = val.join('=').trim();
+    });
+}
+
 /**
- * Random Configs for AI
+ * History Awareness: Get titles of existing games
  */
-const GAME_TYPES = [
-    "Dodging items falling from the sky",
-    "Clicking moving targets as fast as possible",
-    "A simple platformer where you jump over gaps",
-    "A rhythm game where you click at the right time",
-    "A memory matching game with shapes",
-    "A typing challenge with falling words",
-    "A snake game variant",
-    "A top-down survival game where you escape enemies"
-];
+function getExistingGames() {
+    const landingPath = path.join(__dirname, 'index.html');
+    if (!fs.existsSync(landingPath)) return [];
+    const content = fs.readFileSync(landingPath, 'utf8');
+    const matches = content.matchAll(/<a href="games\/.*?">(.*?)<\/a>/g);
+    return Array.from(matches).map(m => m[1]);
+}
 
-const STYLES = [
-    "Cyberpunk with neon colors and dark background",
-    "Retro 8-bit aesthetic with pixelated fonts",
-    "Minimalist and clean white/gray UI",
-    "Nature-themed with greens and soft earthy tones",
-    "High-contrast black and yellow layout",
-    "Glassmorphism with blurred backgrounds and vivid accents",
-    "Comic book style with bold lines and vibrant colors"
-];
+/**
+ * AI Brainstorming: Concept Phase
+ */
+async function brainstormGameConcept(history) {
+    const apiKey = process.env.BUTLER_API_KEY || process.env.GEMINI_API_KEY;
+    const model = process.env.BUTLER_MODEL || "gpt-4o-mini";
+    const baseUrl = process.env.BUTLER_BASE_URL || "https://api.openai.com/v1";
 
-const TITLES = [
-    "Nebula Runner", "Void Clicker", "Cyber Strike", "Zen Flow",
-    "Pulse Hunter", "Echo Jumper", "Grid Master", "Synth Wave",
-    "Neon Reflex", "Bit Blaster", "Shadow Escape", "Spark Drift"
-];
+    if (!apiKey) return null;
+
+    const historyStr = history.length > 0 ? history.join(', ') : 'None';
+    const prompt = `You are a visionary game designer. Your goal is to brainstorm a UNIQUE, simple HTML5 game concept.
+Already created games: ${historyStr}.
+You MUST NOT repeat any of the above titles or their core mechanics.
+
+Provide a JSON response:
+{
+  "title": "Creative Title (English)",
+  "type": "Specific gameplay description (e.g. 'A side-scrolling shooter with gravity flipping')",
+  "style": "Visual style description"
+}
+Output only JSON.`;
+
+    try {
+        console.log("[Generator] Brainstorming new concept...");
+        const response = await axios.post(`${baseUrl}/chat/completions`, {
+            model: model,
+            messages: [{ role: "user", content: prompt }],
+            response_format: { type: "json_object" }
+        }, { headers: { 'Authorization': `Bearer ${apiKey}` } });
+
+        return JSON.parse(response.data.choices[0].message.content);
+    } catch (e) {
+        console.error("[Generator] Brainstorming Error:", e.message);
+        return null;
+    }
+}
 
 /**
  * AI Generation Helper
  */
-async function callAIForGame(title, type, style) {
+async function callAIForGame(concept, history) {
     const apiKey = process.env.BUTLER_API_KEY || process.env.GEMINI_API_KEY;
     const model = process.env.BUTLER_MODEL || "gpt-4o-mini";
     const baseUrl = process.env.BUTLER_BASE_URL || "https://api.openai.com/v1";
@@ -47,20 +76,20 @@ async function callAIForGame(title, type, style) {
 
     const prompt = `You are a creative game developer.
 Create a small, fun, single-file HTML5 game.
-Title: ${title}
-Gameplay Type: ${type}
-Visual Style: ${style}
+Title: ${concept.title}
+Gameplay Concept: ${concept.type}
+Visual Style: ${concept.style}
+
+HISTORY (DO NOT REPEAT): ${history.join(', ')}
 
 Requirements:
 - Output a single complete HTML file containing all CSS and JS.
-- The game should be simple, intuitive, and fun.
-- Use the visual style provided.
-- Include a Start button and a score system.
-- Ensure it works on desktop.
-- Return ONLY the clean HTML code. No talk, no markdown markers.`;
+- Return ONLY the clean HTML code. No talk, no markdown markers.
+- Ensure the gameplay is unique and reflects the concept provided.
+- Include a Start button and a score system.`;
 
     try {
-        console.log(`[Generator] Requesting AI to generate: ${title} (${type})...`);
+        console.log(`[Generator] Requesting AI to generate: ${concept.title}...`);
         const response = await axios.post(`${baseUrl}/chat/completions`, {
             model: model,
             messages: [{ role: "user", content: prompt }],
@@ -70,7 +99,6 @@ Requirements:
         });
 
         let code = response.data.choices[0].message.content.trim();
-        // Remove markdown triple backticks if present
         if (code.startsWith('```html')) code = code.replace(/```html\n?|```/g, '');
         else if (code.startsWith('```')) code = code.replace(/```\n?|```/g, '');
 
@@ -82,13 +110,15 @@ Requirements:
 }
 
 /**
- * Fallback to legacy template logic
+ * Fallback to legacy template logic (more randomized)
  */
 function generateTemplateGame(title, seed) {
     const bg = Math.random() > 0.5 ? '#0b1220' : '#1a1a1a';
     const h = Math.floor(Math.random() * 360);
     const color = `hsl(${h}, 80%, 50%)`;
-    const speed = (Math.random() * 1.5 + 0.8).toFixed(2);
+    // Add more variance to fallback
+    const speed = ((seed % 50) / 10 + 0.5).toFixed(2);
+    const gravity = ((seed % 30) / 20 + 0.1).toFixed(2);
 
     const templatePath = path.join(__dirname, 'templates', 'game-template.html');
     if (!fs.existsSync(templatePath)) return "<html><body>Game template missing.</body></html>";
@@ -99,27 +129,39 @@ function generateTemplateGame(title, seed) {
         .replace(/\{\s*\{\s*SEED\s*\}\s*\}/gs, seed)
         .replace(/\{\s*\{\s*BG\s*\}\s*\}/gs, bg)
         .replace(/\{\s*\{\s*COLOR\s*\}\s*\}/gs, color)
-        .replace(/\{\s*\{\s*SPEED\s*\}\s*\}/gs, speed);
+        .replace(/\{\s*\{\s*SPEED\s*\}\s*\}/gs, speed)
+        .replace(/\{\s*\{\s*GRAVITY\s*\}\s*\}/gs, gravity);
 }
 
 /**
  * Main Execution
  */
 async function generateDailyGame() {
+    const history = getExistingGames();
+    console.log(`[Generator] Historical games count: ${history.length}`);
+
+    let concept = await brainstormGameConcept(history);
+    
+    // Safety check if brainstorming fails or returns an existing title
+    if (!concept || history.includes(concept.title)) {
+        console.log("[Generator] AI failed to provide a unique concept. Falling back to randomized defaults.");
+        concept = {
+            title: "Neon reflex " + Math.floor(Math.random() * 9999),
+            type: "Dodge falling blocks that speed up over time",
+            style: "Cyberpunk neon theme"
+        };
+    }
+
     const dateStr = new Date().toISOString().slice(0, 10);
     const seed = String(Math.floor(Math.random() * 1e9));
     const slug = 'game-' + seed.slice(0, 6);
     const folderName = `${dateStr}-${slug}`;
 
-    const title = TITLES[Math.floor(Math.random() * TITLES.length)];
-    const type = GAME_TYPES[Math.floor(Math.random() * GAME_TYPES.length)];
-    const style = STYLES[Math.floor(Math.random() * STYLES.length)];
-
-    let gameCode = await callAIForGame(title, type, style);
+    let gameCode = await callAIForGame(concept, history);
 
     if (!gameCode) {
         console.log("[Generator] Falling back to template-based generation.");
-        gameCode = generateTemplateGame(title, seed);
+        gameCode = generateTemplateGame(concept.title, seed);
     }
 
     const outputDir = path.join(__dirname, 'games', folderName);
@@ -127,8 +169,8 @@ async function generateDailyGame() {
 
     fs.writeFileSync(path.join(outputDir, 'index.html'), gameCode);
 
-    updateLandingPage(folderName, title, dateStr);
-    console.log(`[Generator] DONE: ${folderName}`);
+    updateLandingPage(folderName, concept.title, dateStr);
+    console.log(`[Generator] DONE: ${folderName} - ${concept.title}`);
 }
 
 function updateLandingPage(slug, title, date) {

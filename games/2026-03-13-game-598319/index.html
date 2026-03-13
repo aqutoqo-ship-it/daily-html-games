@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Cascade</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1c1c1c, #3a3a3a);
+            overflow: hidden;
+        }
+        canvas {
+            border: 2px solid #fff;
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+        #startButton {
+            padding: 10px 20px;
+            background: #00ffcc;
+            border: none;
+            color: #000;
+            cursor: pointer;
+            font-size: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        #startButton:hover {
+            background: #00cc99;
+        }
+        #score {
+            color: #fff;
+            font-size: 24px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="400" height="600"></canvas>
+    <div id="score">Score: 0</div>
+    <button id="startButton">Start Game</button>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const colors = ['#FF5733', '#33FF57', '#3357FF', '#F0F033', '#FF33A1'];
+        let blocks = [];
+        let score = 0;
+        let gameInterval;
+        let currentBlock;
+
+        function startGame() {
+            score = 0;
+            blocks = [];
+            document.getElementById('score').innerText = `Score: ${score}`;
+            document.getElementById('startButton').style.display = 'none';
+            createNewBlock();
+            gameInterval = setInterval(updateGame, 1000);
+        }
+
+        function createNewBlock() {
+            currentBlock = {
+                x: Math.floor(Math.random() * 4) * 100,
+                y: 0,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                rotated: false
+            };
+        }
+
+        function updateGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBlocks();
+            drawCurrentBlock();
+            if (currentBlock.y < canvas.height - 100) {
+                currentBlock.y += 100;
+            } else {
+                if (placeBlock()) {
+                    clearLines();
+                    createNewBlock();
+                } else {
+                    endGame();
+                }
+            }
+        }
+
+        function drawBlocks() {
+            for (const block of blocks) {
+                ctx.fillStyle = block.color;
+                ctx.fillRect(block.x, block.y, 100, 100);
+            }
+        }
+
+        function drawCurrentBlock() {
+            ctx.fillStyle = currentBlock.color;
+            ctx.fillRect(currentBlock.x, currentBlock.y, 100, 100);
+        }
+
+        function placeBlock() {
+            // Check if the block can be placed
+            if (blocks.some(block => block.x === currentBlock.x && block.y === currentBlock.y)) {
+                return false;
+            }
+            blocks.push(currentBlock);
+            return true;
+        }
+
+        function clearLines() {
+            for (let y = canvas.height - 100; y >= 0; y -= 100) {
+                const lineBlocks = blocks.filter(block => block.y === y);
+                if (lineBlocks.length === 4) {
+                    blocks = blocks.filter(block => block.y !== y);
+                    score += 10;
+                    document.getElementById('score').innerText = `Score: ${score}`;
+                    // Move down blocks above cleared line
+                    for (const block of blocks) {
+                        if (block.y < y) block.y += 100;
+                    }
+                }
+            }
+        }
+
+        function endGame() {
+            clearInterval(gameInterval);
+            alert(`Game Over! Your score: ${score}`);
+            document.getElementById('startButton').style.display = 'block';
+        }
+
+        document.getElementById('startButton').addEventListener('click', startGame);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' && currentBlock.x > 0) {
+                currentBlock.x -= 100;
+            }
+            if (e.key === 'ArrowRight' && currentBlock.x < canvas.width - 100) {
+                currentBlock.x += 100;
+            }
+            if (e.key === 'ArrowUp') {
+                currentBlock.rotated = !currentBlock.rotated; // This is a placeholder for rotation
+            }
+        });
+    </script>
+</body>
+</html>
