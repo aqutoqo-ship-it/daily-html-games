@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celestial Connect</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5510873226977158" crossorigin="anonymous"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(0,0,0,1) 100%);
+        }
+        #start-btn {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            background-color: #fff;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #score {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 20px;
+        }
+        .adsbygoogle {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5510873226977158" data-ad-slot="7052338247" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    
+    <canvas id="gameCanvas"></canvas>
+    <button id="start-btn">Start</button>
+    <div id="score">Score: 0</div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreDisplay = document.getElementById('score');
+        const startBtn = document.getElementById('start-btn');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let score = 0;
+        let constellations = [];
+        let connections = [];
+        let isDrawing = false;
+
+        class Star {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.radius = 5 + Math.random() * 5;
+                this.color = 'rgba(255, 255, 255, 0.8)';
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+        }
+
+        function resetGame() {
+            score = 0;
+            connections = [];
+            constellations = [];
+            for (let i = 0; i < 5; i++) {
+                constellations.push(new Star(Math.random() * canvas.width, Math.random() * canvas.height));
+            }
+            draw();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            constellations.forEach(star => star.draw());
+            connections.forEach(connection => {
+                ctx.beginPath();
+                ctx.moveTo(connection.start.x, connection.start.y);
+                ctx.lineTo(connection.end.x, connection.end.y);
+                ctx.strokeStyle = 'rgba(255, 255, 0, 0.5)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+            scoreDisplay.innerText = `Score: ${score}`;
+        }
+
+        function connectStars(start, end) {
+            connections.push({start, end});
+            score++;
+            draw();
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            const startStar = constellations.find(star => 
+                Math.hypot(star.x - e.clientX, star.y - e.clientY) < star.radius
+            );
+            if (startStar) {
+                canvas.addEventListener('mousemove', drawLine);
+                function drawLine(e) {
+                    const endStar = constellations.find(star => 
+                        Math.hypot(star.x - e.clientX, star.y - e.clientY) < star.radius
+                    );
+                    if (endStar && endStar !== startStar) {
+                        connectStars(startStar, endStar);
+                        canvas.removeEventListener('mousemove', drawLine);
+                    }
+                }
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+        });
+
+        startBtn.addEventListener('click', () => {
+            startBtn.style.display = 'none';
+            resetGame();
+        });
+
+        draw();
+    </script>
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="aqutoqo" data-description="Support me on Buy me a coffee!" data-message="" data-color="#FFD700" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body>
+</html>
